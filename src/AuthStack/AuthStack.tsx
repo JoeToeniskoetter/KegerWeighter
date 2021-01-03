@@ -4,10 +4,12 @@ import 'react-native-gesture-handler'
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import Login from './screens/Login';
 import Register from './screens/Register';
+import ResetPassword from './screens/ResetPassword';
 
 export type AuthParamList = {
   Login: undefined;
   Register: undefined;
+  ResetPassword: undefined;
 };
 
 export type AuthNavProps<T extends keyof AuthParamList> = {
@@ -21,9 +23,9 @@ interface AuthStackProps {
 
 }
 
-export const AuthStack: React.FC<AuthStackProps> = ({}) => {
-    return (
-      <NavigationContainer>
+export const AuthStack: React.FC<AuthStackProps> = ({ }) => {
+  return (
+    <NavigationContainer>
       <AuthStackNavigator.Navigator
         initialRouteName="Login"
       >
@@ -31,18 +33,26 @@ export const AuthStack: React.FC<AuthStackProps> = ({}) => {
           name="Login"
           component={Login}
           options={{
-             header:() => null
+            header: () => null
           }}
         />
         <AuthStackNavigator.Screen
           name="Register"
           component={Register}
           options={{
-            header:() => null
-         }}
+            header: () => null
+          }}
+        />
+
+        <AuthStackNavigator.Screen
+          name="ResetPassword"
+          component={ResetPassword}
+          options={{
+            header: () => null
+          }}
         />
       </AuthStackNavigator.Navigator>
-      </NavigationContainer>
-    );
+    </NavigationContainer>
+  );
 }
 
