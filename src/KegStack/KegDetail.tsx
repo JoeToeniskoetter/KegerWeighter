@@ -43,11 +43,11 @@ export function KegDetail({ navigation, route }: KegNavProps<'KegDetail'>) {
   })
 
   useEffect(() => {
-    console.log('running useEffect in detail')
+    // console.log('running useEffect in detail')
     socket?.on(`${KegEvents.KEG_UPDATE}.${route.params.id}`, updateNewData);
 
     return () => {
-      console.log('removing listeners from detail')
+      // console.log('removing listeners from detail')
       socket?.off(`${KegEvents.KEG_UPDATE}.${route.params.id}`, updateNewData)
     }
   }, [socket])
@@ -86,12 +86,22 @@ export function KegDetail({ navigation, route }: KegNavProps<'KegDetail'>) {
 
     let dailyBeers = Number(summaryData?.dailyData[0].beersdrank || 0)
     let prevDailyBeers = Number(summaryData?.dailyData[1].beersdrank || 0)
+    let prevWeeklyBeers;
+    let prevMonthlyBeers;
 
     let weeklyBeers = Number(summaryData?.weeklyData[0].beersdrank || 0)
-    let prevWeeklyBeers = Number(summaryData?.weeklyData[1].beersdrank || 0)
+    if (!summaryData?.weeklyData) {
+      prevWeeklyBeers = 0;
+    } else {
+      prevWeeklyBeers = Number(summaryData?.weeklyData?.length > 1 ? summaryData?.weeklyData[1].beersdrank : 0)
+    }
 
     let monthlyBeers = Number(summaryData?.monthlyData[0].beersdrank || 0)
-    let prevMonthlyBeers = Number(summaryData?.monthlyData[1].beersdrank || 0)
+    if (!summaryData?.monthlyData) {
+      monthlyBeers = 0;
+    } else {
+      prevMonthlyBeers = Number(summaryData?.monthlyData?.length > 1 ? summaryData?.monthlyData[1].beersdrank : 0)
+    }
 
     const dailyTrend = {
       beersdrank: dailyBeers,
@@ -108,7 +118,7 @@ export function KegDetail({ navigation, route }: KegNavProps<'KegDetail'>) {
     const monthlyTrend = {
       beersdrank: monthlyBeers,
       durationDescription: { top: 'This', bottom: 'Month' },
-      trendDirection: monthlyBeers > prevMonthlyBeers ? TrendDirection.HIGHER : monthlyBeers === prevMonthlyBeers ? null : TrendDirection.LOWER
+      trendDirection: prevMonthlyBeers !== undefined && monthlyBeers > prevMonthlyBeers ? TrendDirection.HIGHER : monthlyBeers === prevMonthlyBeers ? null : TrendDirection.LOWER
     }
     return [dailyTrend, weeklyTrend, monthlyTrend]
 
