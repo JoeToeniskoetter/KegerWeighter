@@ -27,7 +27,7 @@ export const KegCardController: React.FC<KegCardControllerProps> = ({ navigation
       <FlatList
         key={1}
         data={data}
-        columnWrapperStyle={{ justifyContent: 'space-around' }}
+        columnWrapperStyle={{ justifyContent: 'space-between', marginHorizontal: 5, marginVertical: 10 }}
         numColumns={2}
         keyExtractor={(item: any) => item.id}
         renderItem={({ item, index }) => {
