@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dimensions, Text, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { DailyDataEntity, MonthlyDataEntity, SummaryData, WeeklyDataEntity } from '../../shared/types';
@@ -9,14 +9,24 @@ interface ChartProps {
 }
 
 export const Chart: React.FC<ChartProps> = ({ data, labels }) => {
-  console.log(labels, data)
-  if (!data) {
+  const [dataSet, setDataSet] = useState<number[] | null>(null);
+
+  useEffect(() => {
+    if (!data) {
+      setDataSet(null)
+    } else {
+      let dataSet: number[] = []
+      data.forEach((x: DailyDataEntity | WeeklyDataEntity | MonthlyDataEntity) => {
+        dataSet.push(Number(x.beersdrank))
+      })
+      setDataSet(dataSet)
+    }
+
+  }, [data])
+
+  if (!dataSet) {
     return null
   }
-  let dataSet: number[] = []
-  data.forEach((x: DailyDataEntity | WeeklyDataEntity | MonthlyDataEntity) => {
-    dataSet.push(Number(x.beersdrank))
-  })
 
   return (
     <View>

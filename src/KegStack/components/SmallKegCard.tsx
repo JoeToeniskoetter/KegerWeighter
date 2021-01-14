@@ -1,10 +1,11 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Dimensions, Text } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { ListItem } from 'react-native-elements';
 import { KegDataContext } from '../../Providers/KegDataProvider';
-import { Keg } from '../../shared/types';
+import { SocketContext } from '../../Providers/SocketProvider';
+import { Keg, KegEvents, KegUpdate } from '../../shared/types';
 
 interface SmallKegCardProps {
   item: Keg,
@@ -14,10 +15,23 @@ interface SmallKegCardProps {
 }
 
 export const SmallKegCard: React.FC<SmallKegCardProps> = ({ fillColor, item, navigation, index }) => {
+  const [newData, setNewData] = useState<KegUpdate | null>(null);
   const { data, kegInfo } = useContext(KegDataContext)
   const { width } = Dimensions.get('window');
+  const { socket } = useContext(SocketContext);
   const isFocused = useIsFocused();
 
+  useEffect(() => {
+    socket?.on(`${KegEvents.KEG_UPDATE}.${item.id}`, updateNewData);
+
+    return () => {
+      socket?.off(`${KegEvents.KEG_UPDATE}.${item.id}`, updateNewData)
+    }
+  }, [socket])
+
+  function updateNewData(update: KegUpdate) {
+    setNewData(update);
+  }
 
   return (<ListItem style={{
     marginHorizontal: 20,

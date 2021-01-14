@@ -36,12 +36,15 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
   const [kegInfo, setKegInfo] = useState<Keg[] | null>(null);
   const BASE_URL = 'http://192.168.1.13:3000';
 
-
   useEffect(() => {
     if (!data) {
       fetchData()
     }
-  }, [])
+
+  }, []);
+
+
+
 
   async function makeApiRequest(route: string, method: string, body?: string) {
     const requestUrl = `${BASE_URL}${route}`

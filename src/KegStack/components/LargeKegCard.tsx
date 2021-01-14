@@ -20,11 +20,9 @@ export const LargeKegCard: React.FC<LargeKegCardProps> = ({ item, navigation, si
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    console.log('running useEffect')
     socket?.on(`${KegEvents.KEG_UPDATE}.${item.id}`, updateNewData);
 
     return () => {
-      console.log('removing listeners from cards')
       socket?.off(`${KegEvents.KEG_UPDATE}.${item.id}`, updateNewData)
     }
   }, [socket])
