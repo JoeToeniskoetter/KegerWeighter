@@ -3,10 +3,8 @@ import { Dimensions, StatusBar, Text, View, Image, TextInput, Switch, TouchableH
 import { KegNavProps } from './KegStack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { CheckBox } from 'react-native-elements';
-import { useKegForm } from '../Providers/util/useKegForm';
 import { SvgFromXml } from 'react-native-svg';
 import { SVGLogo2 } from '../AuthStack/screens/components/SVGLogo2';
-import { Keg } from '../shared/types';
 import { KegSizes } from '../shared/types';
 import { KegDataContext } from '../Providers/KegDataProvider';
 import { SettingsContext } from '../Providers/SettingsProvider';
@@ -28,35 +26,6 @@ const editKegSchema = Yup.object().shape({
   subscribed: Yup.boolean()
 })
 
-const defaultKegForm = {
-  beerType: '',
-  customTare: 0,
-  data: {
-    id: '',
-    beersDrank: 0,
-    temp: 0,
-    beersLeft: 0,
-    date: new Date(),
-    percLeft: 0,
-    kegId: '',
-    kegSize: '',
-    weight: 0,
-  },
-  id: '',
-  kegSize: '',
-  location: '',
-  userId: '',
-  subscribed: false,
-  notifications: {
-    id: '',
-    kegId: '',
-    firstPerc: 0,
-    secondPerc: 0,
-    firstNotifComplete: false,
-    secondNotifComplete: false,
-    date: new Date(),
-  },
-};
 
 const askToChangeNotificationPermissions = () => {
   Alert.alert(
@@ -79,7 +48,6 @@ export function EditKeg({ navigation, route }: KegNavProps<'EditKeg'>) {
   const { notificationsAllowed } = useContext(SettingsContext);
   const { width } = Dimensions.get('window');
   const currKeg = kegInfo?.filter(keg => keg.id === route.params.id)[0];
-
 
   if (!currKeg) {
     return null;
@@ -110,7 +78,6 @@ export function EditKeg({ navigation, route }: KegNavProps<'EditKeg'>) {
             await Alert.alert('Saved!')
           }}>
             {({ errors, touched, values, handleChange, handleSubmit, setFieldTouched, setFieldValue, dirty, isSubmitting }) => {
-              console.log(errors)
               return (
                 <>
                   <Text style={{ alignSelf: 'flex-start', marginLeft: 40, marginBottom: 5, color: '#868383' }}>Beer Type</Text>
