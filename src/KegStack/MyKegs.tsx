@@ -37,7 +37,7 @@ export function MyKegs({ navigation, route }: HomeNavProps<'MyKegs'>) {
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', width: '100%', marginTop: STATUS_BAR_HEIGHT || 0 + 60, }}>
           <View style={{ width: '45%' }}>
-            <Text style={{ fontSize: 12, paddingLeft: '5%', marginBottom: 20 }}>Dashboard</Text>
+            <Text style={{ fontSize: width * .08, paddingLeft: '5%', marginBottom: 20 }}>Dashboard</Text>
           </View>
           <View style={{ width: '50%', alignItems: 'flex-end', justifyContent: 'center' }}>
             <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginBottom: 20 }}>

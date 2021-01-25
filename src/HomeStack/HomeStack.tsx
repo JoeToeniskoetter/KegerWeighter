@@ -1,19 +1,18 @@
-import React, { useContext } from 'react'
-import { StackNavigationProp } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, RouteProp, useNavigation } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import KegStackNavigator from '../KegStack/KegStack';
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import Fontawesome from 'react-native-vector-icons/FontAwesome'
-import { Alert, Dimensions, Modal, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import React from 'react';
+import { Modal, TouchableOpacity } from 'react-native';
+import Fontawesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { NewKegStack } from '../KegStack/components/NewKeg';
 import { useModal } from '../KegStack/hooks/useModal';
-import { NewKeg, NewKegStack } from '../KegStack/components/NewKeg';
-import Settings from './screens/Settings';
-import { KegDataProvider } from '../Providers/KegDataProvider';
-import { SettingsProvider } from '../Providers/SettingsProvider'
-import { Keg } from '../shared/types';
-import { SocketProvider } from '../Providers/SocketProvider';
+import KegStackNavigator from '../KegStack/KegStack';
 import { BLEManager } from '../Providers/BLEManager';
+import { KegDataProvider } from '../Providers/KegDataProvider';
+import { SocketProvider } from '../Providers/SocketProvider';
+import { Keg } from '../shared/types';
+import Settings from './screens/Settings';
 
 export type HomeParamList = {
   MyKegs: undefined;
