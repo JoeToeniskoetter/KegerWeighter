@@ -16,7 +16,7 @@ export const KegDataContext = createContext<{
   loading: boolean,
   data: Keg[] | null,
   fetchSummaryData: (kegId: string) => Promise<Summary | null>,
-  activateKeg: (kegForm: KegForm) => void,
+  activateKeg: (kegForm: KegForm) => Promise<boolean>,
   updateKeg: (kegForm: { kegId: string, kegSize: string, location: string, beerType: string, firstNotif: number, secondNotif: number, subscribed: boolean }) => void
   kegInfo: Keg[] | null,
 }>({
@@ -24,7 +24,7 @@ export const KegDataContext = createContext<{
   loading: false,
   data: null,
   fetchSummaryData: async (kegId: string) => null,
-  activateKeg: (kegForm: KegForm) => { },
+  activateKeg: async (kegForm: KegForm) => false,
   updateKeg: (kegForm: { kegId: string, kegSize: string, location: string, beerType: string, firstNotif: number, secondNotif: number, subscribed: boolean }) => { },
   kegInfo: null,
 })
@@ -85,7 +85,7 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
     return json
   }
 
-  async function activateKeg(kegForm: KegForm) {
+  async function activateKeg(kegForm: KegForm): Promise<boolean> {
 
     let result = await makeApiRequest(`/api/kegs/${kegForm.id}`, 'post', JSON.stringify(kegForm));
     console.log(result.json)
@@ -93,6 +93,8 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
       //keg activated fetch new data
       fetchData()
     }
+
+    return result.ok
 
   }
 
