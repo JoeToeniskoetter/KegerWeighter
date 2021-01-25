@@ -3,11 +3,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Text, View } from 'react-native';
 import { Device } from 'react-native-ble-plx';
 import { FlatList } from 'react-native-gesture-handler';
-import { BLEContext, NetworkList } from '../../Providers/BLEManager';
+import { BLEContext, NetworkInfo, NetworkList } from '../../Providers/BLEManager';
 import { ListItem } from 'react-native-elements';
 import { ActivityIndicator } from 'react-native';
 import { Alert } from 'react-native';
 import { NewKegNavProps } from './NewKeg';
+import { Platform } from 'react-native';
 
 interface ConnectWifiProps {
   device: Device
@@ -16,12 +17,41 @@ interface ConnectWifiProps {
 export function ConnectWifi({ navigation, route }: NewKegNavProps<'ConnectWifi'>) {
   const { getNetworksFromDevice } = useContext(BLEContext);
   const [networks, setNetworks] = useState<NetworkList | null>();
-  const { connectedDevice, sendWifiCredsToDevice, scanningWifi } = useContext(BLEContext);
-  const [networksLoading, setNetworksLoading] = useState<boolean>(false);
+  const { connectedDevice, sendWifiCredsToDevice, scanningWifi, scan } = useContext(BLEContext);
+  const [wifiConnecting, setWifiConnecting] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
 
   useEffect(() => {
     fetchNetworks()
   }, [connectedDevice]);
+
+  useEffect(() => {
+    if (!connectedDevice) {
+      navigation.navigate("MyKegs");
+      Alert.alert("Device disconnected");
+    }
+  }, [connectedDevice])
+
+  async function IOSPromptWifiPassword(item: NetworkInfo) {
+    Alert.prompt("Enter Password", `Enter Wifi Password for ${item.ssid}`, async (text: string) => {
+      console.log('Password: ', text)
+      setWifiConnecting(true);
+      let res = await sendWifiCredsToDevice({ ssid: item.ssid, pwd: text });
+      console.log('RESULT: ', res)
+      if (res) {
+        Alert.alert("Connected to Wifi!")
+        navigation.navigate("SetupKeg");
+        setWifiConnecting(false);
+      } else {
+        Alert.alert("Connection unsuccessful")
+        setWifiConnecting(false);
+      }
+    });
+  }
+
+  async function AndroidPromptWifiPassword(item: NetworkInfo) {
+    Alert.alert("test", "test", [], { cancelable: true })
+  }
 
   function signalStength(rssi: number): { rating: string, color: string } {
     if (rssi > -50) {
@@ -64,11 +94,21 @@ export function ConnectWifi({ navigation, route }: NewKegNavProps<'ConnectWifi'>
   if (scanningWifi) {
     return (
       <View style={{ backgroundColor: 'white', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="black" />
         <Text>Device is Scanning for Wifi Networks...</Text>
       </View>
     )
   }
+
+  if (wifiConnecting) {
+    return (
+      <View style={{ backgroundColor: 'white', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="black" />
+        <Text>Device is Attempting Connection...</Text>
+      </View>
+    )
+  }
+
 
   return (
     <View style={{ backgroundColor: 'white', flex: 1 }}>
@@ -95,11 +135,11 @@ export function ConnectWifi({ navigation, route }: NewKegNavProps<'ConnectWifi'>
               height: 80
             }}
             onPress={() => {
-              Alert.prompt("Enter Password", `Enter Wifi Password for ${item.ssid}`, (text: string) => {
-                console.log('Password: ', text)
-                sendWifiCredsToDevice({ ssid: item.ssid, pwd: text });
-                navigation.navigate("SetupKeg");
-              });
+              if (Platform.OS === 'ios') {
+                IOSPromptWifiPassword(item);
+              } else {
+                navigation.navigate("WifiPasswordAndroid", item);
+              }
             }}
           >
             <ListItem.Content>

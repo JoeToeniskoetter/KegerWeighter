@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Dimensions, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import { SvgFromXml } from 'react-native-svg';
@@ -9,22 +9,33 @@ import { useKegForm } from '../Providers/util/useKegForm';
 import { KegSizes } from '../shared/types';
 import * as Yup from 'yup';
 import { BLEContext } from '../Providers/BLEManager';
+import { NewKegNavProps } from './components/NewKeg';
+import { Alert } from 'react-native';
 
 interface SetupKegProps {
 
 }
 let ActivateKegSchema = Yup.object().shape({
-  id: Yup.string().required('Please provide an id'),
+  // id: Yup.string().required('Please provide an id'),
   beerType: Yup.string().required(' Please provde a beer type'),
   location: Yup.string().required(' Please provide a location')
 });
 
-export const SetupKeg: React.FC<SetupKegProps> = ({ }) => {
+export function SetupKeg({ navigation, route }: NewKegNavProps<'SetupKeg'>) {
   const { activateKeg } = useContext(KegDataContext);
-  const { connectedDevice } = useContext(BLEContext);
+  const { connectedDevice, restartDevice } = useContext(BLEContext);
   const { kegForm } = useKegForm({ keg: null });
   const { width, height } = Dimensions.get('window');
   const initialValues: KegForm = { id: '', kegSize: KegSizes.HALF_BARREL, location: '', beerType: '', subscribed: false };
+
+  useEffect(() => {
+    if (!connectedDevice) {
+      navigation.navigate("MyKegs");
+      Alert.alert("Device disconnected");
+    }
+  }, [connectedDevice])
+
+
   return (
 
     <ScrollView contentContainerStyle={{ height: height * 1.1 }}
@@ -36,13 +47,27 @@ export const SetupKeg: React.FC<SetupKegProps> = ({ }) => {
         <Text style={{ fontSize: 24 }}>Add a Keg</Text>
       </View>
       <Formik initialValues={initialValues}
-        onSubmit={values => activateKeg(values)}
+        onSubmit={async values => {
+          let successful = await activateKeg({
+            beerType: values.beerType,
+            kegSize: values.kegSize,
+            location: values.location,
+            subscribed: values.subscribed,
+            id: connectedDevice?.id || ''
+          });
+          if (successful) {
+            await restartDevice();
+            navigation.navigate("MyKegs");
+          } else {
+            Alert.alert("KegerWeighter with this ID not found!")
+          }
+        }}
         validationSchema={ActivateKegSchema}
       >
         {({ errors, touched, values, handleChange, setFieldValue, handleSubmit, isSubmitting, setFieldTouched }) => {
           return (
             <View style={{ flex: 1, width, alignItems: 'center' }}>
-              <Text style={{ alignSelf: 'flex-start', marginLeft: 40, marginTop: 10, marginBottom: 5, color: '#868383' }}>KegerWeighter ID {touched.id && errors.id ? <Text style={{ color: 'red', }}>{errors.id}</Text> : null}</Text>
+              <Text style={{ alignSelf: 'flex-start', marginLeft: 40, marginTop: 10, marginBottom: 5, color: '#868383' }}>KegerWeighter ID</Text>
               <TextInput style={[{ backgroundColor: '#E2DFDF', width: '80%', height: 45, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20 }, touched.id && errors.id ? styles.inputError : null]} placeholderTextColor="#868383"
                 onChangeText={handleChange('id')} value={connectedDevice?.id}
                 onBlur={() => setFieldTouched('id')}
