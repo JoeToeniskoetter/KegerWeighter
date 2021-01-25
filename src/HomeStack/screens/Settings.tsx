@@ -13,7 +13,7 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
 
   const { beerSize, setNewBeerSize, tempMeasurement, setNewTempMeasurement, cardLayout, setNewCardLayout } = useContext(SettingsContext)
   const { width, height } = Dimensions.get('screen');
-  const { logout } = useContext(AuthContext);
+  const { logout, user, tokens } = useContext(AuthContext);
   const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
 
   return (
@@ -63,7 +63,9 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
       <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between' }}>
       </View>
       <View style={{ marginTop: height * .08 }}>
-        <PrimaryButton onPress={() => logout()} text={"LOGOUT"} />
+        <PrimaryButton onPress={async () => {
+          await logout();
+        }} text={"LOGOUT"} />
       </View>
     </ScrollView>
   );

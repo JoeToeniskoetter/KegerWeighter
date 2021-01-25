@@ -1,9 +1,10 @@
-import React, { createContext, useState, useEffect, useRef } from 'react'
+import React, { createContext, useState, useEffect, useRef, useContext } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import { AppState, AppStateStatus } from 'react-native';
 import { Card } from 'react-native-elements';
 import { Temp } from '../KegStack/components/Temp';
+import { AuthContext } from './AuthProvider';
 
 type SavedSettings = {
   beerSize: BeerSize,
@@ -30,8 +31,6 @@ interface SettingsProviderProps {
   tempMeasurement: TemperatureMeasurement,
   setNewBeerSize: (beerSize: BeerSize) => void;
   setNewTempMeasurement: (tempMeasurement: TemperatureMeasurement) => void;
-  notificationsAllowed: boolean;
-  checkApplicationPermission: () => Promise<boolean>;
   cardLayout: CardLayout,
   setNewCardLayout: (cardLayout: CardLayout) => void;
 }
@@ -41,8 +40,6 @@ export const SettingsContext = createContext<SettingsProviderProps>({
   tempMeasurement: TemperatureMeasurement.FARENHEIGHT,
   setNewBeerSize: async (beerSize: BeerSize) => { },
   setNewTempMeasurement: async (tempMeasurement: TemperatureMeasurement) => { },
-  notificationsAllowed: false,
-  checkApplicationPermission: async () => false,
   cardLayout: CardLayout.LARGE,
   setNewCardLayout: (cardLayout: CardLayout) => { }
 })
@@ -53,39 +50,11 @@ export const SettingsProvider: React.FC<{}> = ({ children }) => {
   const [tempMeasurement, setTempMeasurement] = useState<TemperatureMeasurement>(TemperatureMeasurement.FARENHEIGHT);
   const [notificationsAllowed, setNotificationsAllowed] = useState<boolean>(false)
   const [cardLayout, setCardLayout] = useState<CardLayout>(CardLayout.LARGE);
-
-  const appState = useRef(AppState.currentState);
-
-  useEffect(() => {
-    AppState.addEventListener("change", _handleAppStateChange);
-
-    return () => {
-      AppState.removeEventListener("change", _handleAppStateChange);
-    };
-  }, []);
-
-  const _handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appState.current.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
-      console.log("App has come to the foreground!");
-      checkApplicationPermission()
-    }
-
-    appState.current = nextAppState;
-  };
+  const { user } = useContext(AuthContext);
 
 
-  async function checkApplicationPermission(): Promise<boolean> {
-    const authorizationStatus = await messaging().requestPermission();
-    let allowed: boolean = authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED || authorizationStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    setNotificationsAllowed(allowed);
-    return allowed
-  };
   useEffect(() => {
     _loadSettingsFromStorage()
-    checkApplicationPermission()
   }, []);
 
   async function _createSettingsObject() {
@@ -138,8 +107,6 @@ export const SettingsProvider: React.FC<{}> = ({ children }) => {
     setNewBeerSize,
     tempMeasurement,
     setNewTempMeasurement,
-    notificationsAllowed,
-    checkApplicationPermission,
     cardLayout,
     setNewCardLayout
   }}>
