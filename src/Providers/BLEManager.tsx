@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { BleError, BleManager, Characteristic, Device, Service, State } from 'react-native-ble-plx';
+import { BleError, BleManager, Characteristic, Device, Service, State, Subscription } from 'react-native-ble-plx';
 import { Buffer } from "buffer";
 import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -64,6 +64,8 @@ export const BLEManager: React.FC<BLEManagerProps> = ({ children }) => {
   const WIFI_UUID = "00005555-ead2-11e7-80c1-9a214cf093ae";
   const WIFI_CONNECTED_UUID = "00006666-ead2-11e7-80c1-9a214cf093ae";
 
+  let disConnectSubscription: Subscription | undefined = undefined;
+
   useEffect(() => {
     const subscription = bleManager?.onStateChange((state) => {
       console.log(state)
@@ -79,26 +81,18 @@ export const BLEManager: React.FC<BLEManagerProps> = ({ children }) => {
 
     return () => {
       subscription?.remove();
-      setDevices([])
+      setDevices([]);
+      disConnectSubscription?.remove();
     }
   }, [bleManager])
 
-  useEffect(() => {
-    const subscription = bleManager?.onDeviceDisconnected(connectedDevice?.id || '', (error: BleError | null, device: Device | null) => {
-      setConnectedDevice(null);
-    })
-    return subscription?.remove();
-  }, [connectedDevice])
-
-  useEffect(() => {
-    const disconnectListener = connectedDevice?.onDisconnected((bleError: BleError | null, dvc: Device) => {
-      setConnectedDevice(null);
-    });
-
-    return disconnectListener?.remove();
-
-  }, [connectedDevice])
-
+  // useEffect(() => {
+  //   subscription = bleManager?.onDeviceDisconnected(connectedDevice?.id || '', (error: BleError | null, device: Device | null) => {
+  //     console.log('Disconnect from BLE listener')
+  //     setConnectedDevice(null);
+  //   })
+  //   return subscription?.remove();
+  // }, [connectedDevice])
 
   useEffect(() => {
     console.log("CREATING BLE MANAGER");
@@ -108,6 +102,7 @@ export const BLEManager: React.FC<BLEManagerProps> = ({ children }) => {
       console.log("no BLE Manager")
     }
     const disconnectListener = connectedDevice?.onDisconnected((bleError: BleError | null, dvc: Device) => {
+      console.log('Disconnect from device listener')
       setConnectedDevice(null);
     });
 
@@ -128,13 +123,11 @@ export const BLEManager: React.FC<BLEManagerProps> = ({ children }) => {
   }
 
   async function scan() {
-    if (!bleState) {
-      console.log("Ble not on");
-
+    if (!bleManager) {
+      return
     }
     setDevices([]);
     setScanning(true);
-    console.log("SCANNING");
 
     bleManager?.startDeviceScan(null, null, async (error: BleError | null, device: Device | null) => {
       if (error) {
@@ -182,6 +175,10 @@ export const BLEManager: React.FC<BLEManagerProps> = ({ children }) => {
   async function connectToDevice(device: Device): Promise<boolean> {
     await bleManager?.connectToDevice(device.id).then((connDevice: Device) => {
       setConnectedDevice(connDevice);
+      disConnectSubscription = connectedDevice?.onDisconnected((bleError: BleError | null, dvc: Device) => {
+        console.log('Disconnect from device listener')
+        setConnectedDevice(null);
+      });
     });
     return true;
   }

@@ -9,6 +9,7 @@ import { ActivityIndicator } from 'react-native';
 import { Alert } from 'react-native';
 import { NewKegNavProps } from './NewKeg';
 import { Platform } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 interface ConnectWifiProps {
   device: Device
@@ -21,16 +22,22 @@ export function ConnectWifi({ navigation, route }: NewKegNavProps<'ConnectWifi'>
   const [wifiConnecting, setWifiConnecting] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchNetworks()
-  }, [connectedDevice]);
+
+  const focused = useIsFocused();
 
   useEffect(() => {
-    if (!connectedDevice) {
-      navigation.navigate("MyKegs");
+    if (connectedDevice) {
+      fetchNetworks()
+    } else {
+      navigation.goBack();
       Alert.alert("Device disconnected");
     }
+  }, [connectedDevice, focused]);
+
+  useEffect(() => {
+    console.log(connectedDevice)
   }, [connectedDevice])
+
 
   async function IOSPromptWifiPassword(item: NetworkInfo) {
     Alert.prompt("Enter Password", `Enter Wifi Password for ${item.ssid}`, async (text: string) => {

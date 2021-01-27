@@ -76,8 +76,7 @@ export function NewKeg({ navigation, route }: NewKegNavProps<'Devices'>) {
   const focused = useIsFocused();
 
   useEffect(() => {
-    console.log(bleState)
-    if (focused && bleState) {
+    if (focused) {
       console.log('starting scan')
       scan();
     }
