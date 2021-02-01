@@ -5,10 +5,9 @@ import React from 'react';
 import { Modal, TouchableOpacity } from 'react-native';
 import Fontawesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { NewKegStack } from '../KegStack/components/NewKeg';
 import { useModal } from '../KegStack/hooks/useModal';
-import KegStackNavigator from '../KegStack/KegStack';
-import { BLEManager } from '../Providers/BLEManager';
+import KegStackNavigator, { KegNavProps } from '../KegStack/KegStack';
+import { SetupKeg } from '../KegStack/SetupKeg';
 import { KegDataProvider } from '../Providers/KegDataProvider';
 import { SocketProvider } from '../Providers/SocketProvider';
 import { Keg } from '../shared/types';
@@ -35,50 +34,48 @@ interface HomeStackProps {
 export const HomeStack: React.FC<HomeStackProps> = ({ }) => {
   const { open, setOpen } = useModal();
   return (
-    <BLEManager>
-      <KegDataProvider>
-        <SocketProvider>
-          <>
-            <Modal visible={open} animationType={'slide'} />
-            <NavigationContainer>
-              <HomeStackNavigator.Navigator
-                initialRouteName="MyKegs"
-              >
-                <HomeStackNavigator.Screen
-                  name="MyKegs"
-                  component={KegStackNavigator}
-                  options={() => ({
-                    tabBarIcon: ({ size, color }) => {
-                      return <Ionicons name="beer-outline" size={size} color={color} />
-                    },
-                    title: 'My Kegs'
-                  })}
-                />
-                <HomeStackNavigator.Screen
-                  name="NewKeg"
-                  component={NewKegStack}
-                  options={() => ({
-                    tabBarIcon: ({ size, color }) => {
-                      return <NewKegIcon />
-                    },
-                    tabBarLabel: () => null
-                  })}
-                />
-                <HomeStackNavigator.Screen
-                  name="Settings"
-                  component={Settings}
-                  options={() => ({
-                    tabBarIcon: ({ size, color }) => {
-                      return <Fontawesome name="wrench" size={size} color={color} />
-                    },
-                  })}
-                />
-              </HomeStackNavigator.Navigator>
-            </NavigationContainer>
-          </>
-        </SocketProvider>
-      </KegDataProvider>
-    </BLEManager>
+    <KegDataProvider>
+      <SocketProvider>
+        <>
+          <Modal visible={open} animationType={'slide'} />
+          <NavigationContainer>
+            <HomeStackNavigator.Navigator
+              initialRouteName="MyKegs"
+            >
+              <HomeStackNavigator.Screen
+                name="MyKegs"
+                component={KegStackNavigator}
+                options={() => ({
+                  tabBarIcon: ({ size, color }) => {
+                    return <Ionicons name="beer-outline" size={size} color={color} />
+                  },
+                  title: 'My Kegs'
+                })}
+              />
+              <HomeStackNavigator.Screen
+                name="NewKeg"
+                component={SetupKeg}
+                options={() => ({
+                  tabBarIcon: ({ size, color }) => {
+                    return <NewKegIcon />
+                  },
+                  tabBarLabel: () => null
+                })}
+              />
+              <HomeStackNavigator.Screen
+                name="Settings"
+                component={Settings}
+                options={() => ({
+                  tabBarIcon: ({ size, color }) => {
+                    return <Fontawesome name="wrench" size={size} color={color} />
+                  },
+                })}
+              />
+            </HomeStackNavigator.Navigator>
+          </NavigationContainer>
+        </>
+      </SocketProvider>
+    </KegDataProvider>
   );
 }
 
