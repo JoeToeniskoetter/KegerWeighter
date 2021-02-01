@@ -10,6 +10,7 @@ import { KegDataContext } from '../Providers/KegDataProvider';
 import { SettingsContext } from '../Providers/SettingsProvider';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { AuthContext } from '../Providers/AuthProvider';
 
 interface EditKegProps {
 
@@ -45,7 +46,7 @@ const askToChangeNotificationPermissions = () => {
 
 export function EditKeg({ navigation, route }: KegNavProps<'EditKeg'>) {
   const { updateKeg, kegInfo } = useContext(KegDataContext);
-  const { notificationsAllowed } = useContext(SettingsContext);
+  const { notificationsAllowed } = useContext(AuthContext);
   const { width } = Dimensions.get('window');
   const currKeg = kegInfo?.filter(keg => keg.id === route.params.id)[0];
 
@@ -76,6 +77,7 @@ export function EditKeg({ navigation, route }: KegNavProps<'EditKeg'>) {
           <Formik validationSchema={editKegSchema} initialValues={initialValues} onSubmit={async (values) => {
             await updateKeg({ kegId: route.params.id, firstNotif: Number(values.notifications.firstPerc), secondNotif: Number(values.notifications.secondPerc), ...values })
             await Alert.alert('Saved!')
+            await navigation.goBack();
           }}>
             {({ errors, touched, values, handleChange, handleSubmit, setFieldTouched, setFieldValue, dirty, isSubmitting }) => {
               return (
