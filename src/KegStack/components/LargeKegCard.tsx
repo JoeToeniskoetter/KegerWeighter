@@ -45,16 +45,34 @@ export const LargeKegCard: React.FC<LargeKegCardProps> = ({ item, navigation, si
     return 0
   }
 
+  function shadowColor() {
+
+    if (newData && newData.percLeft) {
+      if (newData.percLeft <= 25) {
+        return "red"
+      } else {
+        return "#000"
+      }
+    }
+
+    if (item.data && item.data.percLeft) {
+      if (item.data.percLeft <= 25) {
+        return "red"
+      }
+      return "#000"
+    }
+  }
 
   function fillColor(): string {
     let currPerc: number = 0;
 
-    if (newData) {
-      currPerc = newData.percLeft
-    }
 
     if (item.data && item.data.percLeft) {
       currPerc = item.data.percLeft
+    }
+
+    if (newData) {
+      currPerc = newData.percLeft
     }
 
 
@@ -148,26 +166,24 @@ export const LargeKegCard: React.FC<LargeKegCardProps> = ({ item, navigation, si
     }
     }
   >
-    {isFocused ?
-      <AnimatedCircularProgress
-        size={80}
-        width={10}
-        fill={currFill()}
-        tintColor={fillColor()}
-        lineCap="round"
-        rotation={360}
-        backgroundColor="transparent">
-        {
-          (fill) => (
-            <Text style={{ fontSize: 22 }}>
-              {`${fill.toFixed(0)}%`}
-            </Text>
-          )
-        }
-      </AnimatedCircularProgress>
-      : null}
+    <AnimatedCircularProgress
+      size={80}
+      width={10}
+      fill={currFill()}
+      tintColor={fillColor()}
+      lineCap="round"
+      rotation={360}
+      backgroundColor="transparent">
+      {
+        (fill) => (
+          <Text style={{ fontSize: 22 }}>
+            {`${fill.toFixed(0)}%`}
+          </Text>
+        )
+      }
+    </AnimatedCircularProgress>
     <ListItem.Content>
-      <ListItem.Title style={{ fontSize: width * .08 }}>{item.beerType}</ListItem.Title>
+      <ListItem.Title style={{ fontSize: width * .08, color: shadowColor() }}>{item.beerType}</ListItem.Title>
       <ListItem.Subtitle style={{ fontSize: 16, color: "#868383" }}>{item.location}</ListItem.Subtitle>
     </ListItem.Content>
     <ListItem.Chevron />

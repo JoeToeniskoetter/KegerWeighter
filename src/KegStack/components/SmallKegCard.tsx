@@ -61,24 +61,22 @@ export const SmallKegCard: React.FC<SmallKegCardProps> = ({ fillColor, item, nav
     }
     }
   >
-    {isFocused ?
-      <AnimatedCircularProgress
-        size={80}
-        width={10}
-        fill={item.data && item.data.percLeft ? item.data.percLeft : 0}
-        tintColor={fillColor}
-        lineCap="round"
-        rotation={360}
-        backgroundColor="transparent">
-        {
-          (fill) => (
-            <Text style={{ fontSize: 22 }}>
-              {`${fill.toFixed(0)}%`}
-            </Text>
-          )
-        }
-      </AnimatedCircularProgress>
-      : null}
+    <AnimatedCircularProgress
+      size={80}
+      width={10}
+      fill={item.data && item.data.percLeft ? item.data.percLeft : 0}
+      tintColor={fillColor}
+      lineCap="round"
+      rotation={360}
+      backgroundColor="transparent">
+      {
+        (fill) => (
+          <Text style={{ fontSize: 22 }}>
+            {`${fill.toFixed(0)}%`}
+          </Text>
+        )
+      }
+    </AnimatedCircularProgress>
     <ListItem.Content>
       <ListItem.Title style={{ fontSize: width * .08 }}>{kegInfo?.filter(keg => keg.id === item.id)[0].beerType}</ListItem.Title>
       <ListItem.Subtitle style={{ fontSize: 16, color: "#868383" }}>{kegInfo?.filter(keg => keg.id === item.id)[0].location}</ListItem.Subtitle>
