@@ -4,6 +4,7 @@ import { KegUpdate, UserTokens, SummaryData, KegEvents, Summary } from '../share
 import { AuthContext } from './AuthProvider';
 import { Keg, KegData } from '../../src/shared/types';
 import { Alert } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 
 interface KegDataProviderProps {
 
@@ -32,7 +33,7 @@ export const KegDataContext = createContext<{
 export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) => {
   const [data, setData] = useState<Keg[] | null>(null)
   const [loading, setLoading] = useState(false);
-  const { tokens, updateTokens, logout } = useContext(AuthContext);
+  const { tokens, updateTokens, logout, fcmToken, user } = useContext(AuthContext);
   const [kegInfo, setKegInfo] = useState<Keg[] | null>(null);
   const BASE_URL = 'http://192.168.1.13:3000';
 
@@ -40,11 +41,7 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
     if (!data) {
       fetchData()
     }
-
   }, []);
-
-
-
 
   async function makeApiRequest(route: string, method: string, body?: string) {
     const requestUrl = `${BASE_URL}${route}`
@@ -91,6 +88,9 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
     console.log(result.json)
     if (result.ok) {
       //keg activated fetch new data
+      if (kegForm.subscribed) {
+        await messaging().subscribeToTopic(kegForm.id);
+      }
       fetchData()
     }
 
@@ -100,8 +100,12 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
 
   async function updateKeg(kegForm: { kegId: string, kegSize: string, location: string, beerType: string, firstNotif: number, secondNotif: number, subscribed: boolean }) {
     setLoading(true);
-    let { json, ok } = await makeApiRequest(`/api/kegs/${kegForm.kegId}`, 'put', JSON.stringify(kegForm))
-
+    if (kegForm.subscribed) {
+      await messaging().subscribeToTopic(kegForm.kegId)
+    } else {
+      await messaging().unsubscribeFromTopic(kegForm.kegId)
+    }
+    let { json, ok } = await makeApiRequest(`/api/kegs/${kegForm.kegId}`, 'put', JSON.stringify({ ...kegForm, fcmToken }));
     if (!ok) {
       Alert.alert(json.message)
       setLoading(false)
@@ -117,13 +121,12 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
   }
 
   async function fetchData() {
-    //may need sep state components for kegInfo versus kegData.
-    //so that race conditions are not an issue
     let { json, ok } = await makeApiRequest('/api/kegs', 'get')
     if (ok) {
       setData(json)
       setKegInfo(json)
     } else {
+      console.log('error fetching data')
       Alert.alert(json.message)
     }
     setLoading(false)
