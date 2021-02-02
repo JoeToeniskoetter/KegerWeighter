@@ -17,14 +17,16 @@ interface AuthProviderProps {
 }
 
 export const AuthContext = createContext<{
-  user: null | boolean
+  user: boolean | null
   setUser: Dispatch<SetStateAction<boolean | null>>,
   loginOrSignUp: (email: string, password: string, authType: string) => void;
   logout: () => void;
   updateTokens: (tokens: UserTokens) => void;
   tokens: UserTokens | null;
+  fcmToken: string | undefined;
   loading: boolean;
   loadingPrevUser: boolean,
+  notificationsAllowed: boolean,
   resetPassword: (email: string) => Promise<string | null>,
   newPassword: (newPasswordForm: { token: string, newPassword: string }) => Promise<string | null>
 }>({
@@ -34,21 +36,35 @@ export const AuthContext = createContext<{
   logout: () => { },
   updateTokens: () => { },
   tokens: null,
+  fcmToken: undefined,
   loading: false,
   loadingPrevUser: false,
+  notificationsAllowed: false,
   resetPassword: async (email: string) => '',
   newPassword: async (newPasswordForm: { token: string, newPassword: string }) => null,
 })
 
+export type User = {
+  email: string,
+  id: string
+}
+
+export type JWTDecoded = {
+  user: User,
+  iat: number,
+  exp: number
+}
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<boolean | null>(null)
-  const [error, setError] = useState<string | null>(null);
   const [tokens, setTokens] = useState<UserTokens | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingPrevUser, setLoadingPrevUser] = useState<boolean>(false)
   const [notificationsAllowed, setNotificationsAllowed] = useState<boolean>(false);
+  const [fcmToken, setFcmToken] = useState<string>();
 
   useEffect(() => {
+
     _loadUserFromStorage();
     checkApplicationPermission();
   }, []);
@@ -62,10 +78,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       AppState.removeEventListener("change", _handleAppStateChange);
     };
   }, []);
-
-  useEffect(() => {
-    updateFCMToken()
-  }, [tokens])
 
   const _handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (
@@ -85,34 +97,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const authorizationStatus = await messaging().requestPermission();
     let allowed: boolean = authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED || authorizationStatus === messaging.AuthorizationStatus.PROVISIONAL;
     setNotificationsAllowed(allowed);
-    if (allowed) {
-      updateFCMToken();
-    } else {
-      console.log('no notifications allowed')
-    }
+    setFcmToken(await messaging().getToken());
     return allowed
   };
 
-
-  function _showError(authError: AuthError) {
-    Alert.alert(authError.error)
-  }
-
   async function _loadUserFromStorage() {
-    let savedUser = await AsyncStorage.getItem('tokens')
-    if (savedUser) {
-      setTokens(JSON.parse(savedUser as any))
-      setUser(true)
+    let savedTokens = await AsyncStorage.getItem('tokens')
+    if (savedTokens) {
+      const tokens: UserTokens = JSON.parse(savedTokens);
+      setTokens(tokens);
+      setUser(true);
       setLoadingPrevUser(false)
     }
     setLoadingPrevUser(false)
   }
+
   async function _saveTokensToStorage(tokens: UserTokens) {
     setTokens(tokens);
     setUser(true);
     await AsyncStorage.setItem('tokens', JSON.stringify(tokens));
   }
-
 
   async function updateTokens(tokens: UserTokens) {
     setTokens(tokens)
@@ -122,21 +126,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   async function _removeTokensFromStorage() {
     setTokens(null);
     await AsyncStorage.removeItem('tokens')
-  }
-
-  async function updateFCMToken() {
-    let result = await fetch(`${BASE_URL}/api/auth/fcmToken`, {
-      headers: {
-        'content-type': 'application/json',
-        'x-auth-token': tokens?.xAuthToken || '',
-        'x-refresh-token': tokens?.xRefreshToken || ''
-      },
-      method: 'post',
-      body: JSON.stringify({
-        fcmToken: await messaging().getToken()
-      })
-    });
-    console.log(result)
   }
 
   async function loginOrSignUp(email: string, password: string, authType: string) {
@@ -152,17 +141,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         })
       });
       let json = await result.json();
-      console.log(json);
       if (result.ok) {
         let xAuthToken = result.headers.get('x-auth-token')
         let xRefreshToken = result.headers.get('x-refresh-token')
         if (xAuthToken && xRefreshToken) {
-          console.log(xRefreshToken, xAuthToken)
-          _saveTokensToStorage({ xAuthToken, xRefreshToken });
+          await _saveTokensToStorage({ xAuthToken, xRefreshToken });
+          await checkApplicationPermission();
+          handleSubscriptions('subscribe', { xAuthToken, xRefreshToken })
         }
         setLoading(false);
       } else {
-        console.log(json.message)
+        console.log('result not ok')
         setLoading(false)
         Alert.alert(json.message)
       }
@@ -206,12 +195,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
+  async function handleSubscriptions(action: string, tokens: UserTokens | null) {
+    if (!tokens) {
+      console.log('NO TOKENS');
+
+    }
+    const result = await fetch(`${BASE_URL}/api/auth/${action}`, {
+      method: 'post',
+      headers: {
+        'content-type': 'application/json',
+        'x-auth-token': tokens?.xAuthToken || '',
+        'x-refresh-token': tokens?.xRefreshToken || ''
+      },
+      body: JSON.stringify({ fcmToken: fcmToken })
+    });
+    if (result.ok) {
+      console.log(`${action} to kegs`)
+    } else {
+      console.log('error subscribing to kegs')
+    }
+  }
+
   async function logout() {
-    await _removeTokensFromStorage()
-    setUser(false)
+    await handleSubscriptions('unsubscribe', tokens)
+    await _removeTokensFromStorage();
+    setUser(null)
   }
   return (
     <AuthContext.Provider value={{
+      fcmToken,
       user,
       setUser,
       loginOrSignUp,
@@ -220,6 +232,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       tokens,
       loading,
       loadingPrevUser,
+      notificationsAllowed,
       resetPassword,
       newPassword
     }}>
