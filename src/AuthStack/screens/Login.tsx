@@ -32,8 +32,8 @@ export default function Login({ navigation, route }: AuthNavProps<'Login'>) {
       </View>
       <KeyboardAvoidingView style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'flex-start', width: '100%', height: '70%', padding: '10%' }}>
         <Text style={{ fontSize: 24 }}>Welcome!</Text>
-        <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 45, opacity: 0.8, borderRadius: 10, marginTop: 25, paddingHorizontal: 20 }} placeholder="Email" placeholderTextColor="#868383" onChangeText={(text: string) => setEmail(text)} />
-        <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 45, opacity: 0.8, borderRadius: 10, marginTop: 10, paddingHorizontal: 20 }} placeholder="Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={(text: string) => setPassword(text)} value={password} />
+        <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 25, paddingHorizontal: 20, fontSize: 18 }} placeholder="Email" placeholderTextColor="#868383" onChangeText={(text: string) => setEmail(text)} />
+        <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 10, paddingHorizontal: 20, fontSize: 18 }} placeholder="Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={(text: string) => setPassword(text)} value={password} />
         <PrimaryButton
           text={'Sign In'}
           loading={loading}

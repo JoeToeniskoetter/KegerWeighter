@@ -12,7 +12,7 @@ import { Formik } from 'formik';
 
 export default function ResetPassword({ navigation, route }: AuthNavProps<'ResetPassword'>) {
   const { resetPassword, newPassword } = useContext(AuthContext);
-  const [emailSent, setEmailSent] = useState<boolean>(true)
+  const [emailSent, setEmailSent] = useState<boolean>(false)
 
   const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
   return (
@@ -41,7 +41,7 @@ export default function ResetPassword({ navigation, route }: AuthNavProps<'Reset
             {({ handleSubmit, values, handleChange, isSubmitting }) => (
               <>
                 <Text style={{ fontSize: 24 }}>Reset Password!</Text>
-                <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 45, opacity: 0.8, borderRadius: 10, marginTop: 25, paddingHorizontal: 20 }} placeholder="Email" placeholderTextColor="#868383" onChangeText={handleChange('email')} value={values.email} />
+                <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.8, borderRadius: 10, marginTop: 25, paddingHorizontal: 20, fontSize: 18 }} placeholder="Email" placeholderTextColor="#868383" onChangeText={handleChange('email')} value={values.email} />
                 <PrimaryButton
                   text={'Send Email'}
                   loading={isSubmitting}
@@ -72,9 +72,9 @@ export default function ResetPassword({ navigation, route }: AuthNavProps<'Reset
               return (
                 <>
                   <Text style={{ fontSize: 24 }}>Reset Password</Text>
-                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 45, opacity: 0.8, borderRadius: 10, marginTop: 25, paddingHorizontal: 20 }} placeholder="Temp Password" placeholderTextColor="#868383" onChangeText={handleChange('tempPassword')} value={values.tempPassword} />
-                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 45, opacity: 0.8, borderRadius: 10, marginTop: 10, paddingHorizontal: 20 }} placeholder="New Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('newPassword')} value={values.newPassword} />
-                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 45, opacity: 0.8, borderRadius: 10, marginTop: 10, paddingHorizontal: 20 }} placeholder="Confirm New Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('confirmPassword')} value={values.confirmPassword} />
+                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 25, paddingHorizontal: 20 }} placeholder="Temp Password" placeholderTextColor="#868383" onChangeText={handleChange('tempPassword')} value={values.tempPassword} />
+                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 10, paddingHorizontal: 20 }} placeholder="New Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('newPassword')} value={values.newPassword} />
+                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 10, paddingHorizontal: 20 }} placeholder="Confirm New Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('confirmPassword')} value={values.confirmPassword} />
                   <PrimaryButton
                     text={'Sign In'}
                     loading={isSubmitting}

@@ -59,16 +59,16 @@ export function EditKeg({ navigation, route }: KegNavProps<'EditKeg'>) {
   return (
     <>
       <StatusBar hidden={true} />
-      <View style={{ marginBottom: -10, paddingTop: '10%' }}>
-        <Ionicons
-          name="arrow-back"
-          color={'black'}
-          size={36}
-          style={{ marginLeft: 20, marginTop: 20 }}
-          onPress={() => navigation.goBack()}
-        />
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false} contentContainerStyle={{ height: '150%' }}>
+        <View style={{ marginBottom: -10, paddingTop: '10%' }}>
+          <Ionicons
+            name="arrow-back"
+            color={'black'}
+            size={36}
+            style={{ marginLeft: 20, marginTop: 20 }}
+            onPress={() => navigation.goBack()}
+          />
+        </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
           <SvgFromXml xml={SVGLogo2} width={80} />
           <Text style={{ fontSize: 24 }}>Update Keg</Text>
@@ -83,38 +83,42 @@ export function EditKeg({ navigation, route }: KegNavProps<'EditKeg'>) {
               return (
                 <>
                   <Text style={{ alignSelf: 'flex-start', marginLeft: 40, marginBottom: 5, color: '#868383' }}>Beer Type</Text>
-                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '80%', height: 45, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20 }} placeholderTextColor="#868383"
-                    maxLength={100}
+                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '80%', height: 55, fontSize: 18, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20 }} placeholderTextColor="#868383"
+                    maxLength={15}
                     value={values.beerType}
                     onChangeText={handleChange('beerType')}
                   />
+                  {errors && errors.beerType ? <Text style={{ color: 'red' }}>{errors.beerType}</Text> : null}
                   <Text style={{ alignSelf: 'flex-start', marginLeft: 40, marginTop: 10, marginBottom: 5, color: '#868383' }}>Location</Text>
-                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '80%', height: 45, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20 }} placeholderTextColor="#868383"
+                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '80%', height: 55, fontSize: 18, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20 }} placeholderTextColor="#868383"
                     maxLength={100}
                     value={values.location}
                     onChangeText={handleChange('location')}
 
                   />
+                  {errors && errors.location ? <Text style={{ color: 'red' }}>{errors.location}</Text> : null}
                   <View style={{
                     flexDirection: 'row', justifyContent: 'space-between', width: width * .8
                   }}>
                     <View>
                       <Text style={{ alignSelf: 'flex-start', marginTop: 10, marginBottom: 5, color: '#868383' }}>First Notification %</Text>
-                      <TextInput style={{ backgroundColor: '#E2DFDF', height: 45, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20, width: width * .38 }}
+                      <TextInput style={{ backgroundColor: '#E2DFDF', height: 55, fontSize: 18, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20, width: width * .38 }}
                         onChangeText={handleChange("notifications['firstPerc']")}
                         placeholderTextColor="#868383"
                         maxLength={3}
                         value={values.notifications.firstPerc.toString()}
                       />
+                      {errors && errors.notifications?.firstPerc ? <Text style={{ color: 'red' }}>% 1-100 Required</Text> : null}
                     </View>
                     <View>
                       <Text style={{ alignSelf: 'flex-start', marginTop: 10, marginBottom: 5, color: '#868383' }}>Second Notification %</Text>
-                      <TextInput style={{ backgroundColor: '#E2DFDF', height: 45, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20, width: width * .38 }}
+                      <TextInput style={{ backgroundColor: '#E2DFDF', height: 55, fontSize: 18, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20, width: width * .38 }}
                         onChangeText={handleChange("notifications['secondPerc']")}
                         placeholderTextColor="#868383"
                         maxLength={3}
                         value={values.notifications.secondPerc.toString()}
                       />
+                      {errors && errors.notifications?.secondPerc ? <Text style={{ color: 'red' }}>% 1-100 Required</Text> : null}
                     </View>
                   </View>
                   <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
@@ -173,15 +177,15 @@ export function EditKeg({ navigation, route }: KegNavProps<'EditKeg'>) {
                     </View>
                     <View>
                     </View>
-                  </View>
-                  <View style={{ marginBottom: 70 }}>
-                    <TouchableHighlight style={{ backgroundColor: dirty ? '#159DFF' : 'lightgrey', height: 45, alignItems: 'center', justifyContent: 'center', borderRadius: 10, marginTop: 10, width: width * .8, alignSelf: 'center' }}
+                    <View style={{ marginBottom: 70 }}>
+                      <TouchableHighlight style={{ backgroundColor: dirty ? '#159DFF' : 'lightgrey', height: 55, alignItems: 'center', justifyContent: 'center', borderRadius: 10, marginTop: 10, width: width * .8 }}
 
-                      underlayColor={dirty ? '#159DFF' : 'lightgrey'} onPress={handleSubmit}>
-                      {isSubmitting ? <ActivityIndicator size="small" color="white" /> :
-                        <Text style={{ color: 'white' }}>Save</Text>
-                      }
-                    </TouchableHighlight>
+                        underlayColor={dirty ? '#159DFF' : 'lightgrey'} onPress={handleSubmit}>
+                        {isSubmitting ? <ActivityIndicator size="small" color="white" /> :
+                          <Text style={{ color: 'white' }}>Save</Text>
+                        }
+                      </TouchableHighlight>
+                    </View>
                   </View>
                 </>
               )

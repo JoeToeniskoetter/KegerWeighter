@@ -45,11 +45,11 @@ export default function Register({ navigation, route }: AuthNavProps<'Register'>
           validationSchema={signUpSchema}>
           {({ errors, touched, values, handleChange, handleSubmit, setFieldTouched }) => (
             <>
-              <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 45, opacity: 0.8, borderRadius: 10, marginTop: 25, paddingHorizontal: 20, }} placeholder="Email" placeholderTextColor="#868383" onChangeText={handleChange('email')} value={values.email} onBlur={() => setFieldTouched('email')} />
+              <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 25, paddingHorizontal: 20, fontSize: 18 }} placeholder="Email" placeholderTextColor="#868383" onChangeText={handleChange('email')} value={values.email} onBlur={() => setFieldTouched('email')} />
               {touched.email && errors.email ? <Text style={{ marginLeft: 5, color: 'red' }}>{errors.email}</Text> : null}
-              <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 45, opacity: 0.8, borderRadius: 10, marginTop: 10, paddingHorizontal: 20 }} placeholder="Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('password')} value={values.password} onBlur={() => setFieldTouched('password')} />
+              <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 10, paddingHorizontal: 20, fontSize: 18 }} placeholder="Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('password')} value={values.password} onBlur={() => setFieldTouched('password')} />
               {touched.password && errors.password ? <Text style={{ marginLeft: 5, color: 'red' }}>{errors.password}</Text> : null}
-              <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 45, opacity: 0.8, borderRadius: 10, marginTop: 10, paddingHorizontal: 20 }} placeholder="Confirm Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('confirmPassword')} value={values.confirmPassword} onBlur={() => setFieldTouched('confirmPassword')} />
+              <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 10, paddingHorizontal: 20, fontSize: 18 }} placeholder="Confirm Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('confirmPassword')} value={values.confirmPassword} onBlur={() => setFieldTouched('confirmPassword')} />
               {touched.confirmPassword && errors.confirmPassword ? <Text style={{ marginLeft: 5, color: 'red' }}>{errors.confirmPassword}</Text> : null}
               <PrimaryButton
                 text={'Sign Up'}
