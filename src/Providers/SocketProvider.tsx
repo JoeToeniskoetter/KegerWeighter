@@ -1,12 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import io, { Socket } from 'socket.io-client';
 import { KegEvents, KegUpdate } from '../shared/types';
-import { AuthContext } from './AuthProvider';
+import { AuthContext, BASE_URL } from './AuthProvider';
 import { KegDataContext } from './KegDataProvider';
-
-interface SocketProviderProps {
-
-}
 
 interface SocketContextProps {
   socket: typeof Socket | null,
@@ -17,7 +13,6 @@ export const SocketContext = createContext<SocketContextProps>({
   socket: null,
   socketConnected: false
 })
-
 
 export const SocketProvider: React.FC<{}> = ({ children }) => {
   const [socket, setSocket] = useState<typeof Socket | null>(null);
@@ -54,7 +49,7 @@ export const SocketProvider: React.FC<{}> = ({ children }) => {
   }, [socket])
 
   async function connectSocket() {
-    setSocket(io(`http://192.168.1.13:3000/user/feed?x-auth-token=${tokens?.xAuthToken}`, { forceNew: true }))
+    setSocket(io(`${BASE_URL}/user/feed?x-auth-token=${tokens?.xAuthToken}`, { forceNew: true }))
   }
 
 

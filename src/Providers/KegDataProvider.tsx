@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import io, { Socket } from 'socket.io-client';
 import { KegUpdate, UserTokens, SummaryData, KegEvents, Summary } from '../shared/types';
-import { AuthContext } from './AuthProvider';
+import { AuthContext, BASE_URL } from './AuthProvider';
 import { Keg, KegData } from '../../src/shared/types';
 import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
@@ -35,13 +35,13 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
   const [loading, setLoading] = useState(false);
   const { tokens, updateTokens, logout, fcmToken, user } = useContext(AuthContext);
   const [kegInfo, setKegInfo] = useState<Keg[] | null>(null);
-  const BASE_URL = 'http://192.168.1.13:3000';
 
-  useEffect(() => {
-    if (!data) {
-      fetchData()
-    }
-  }, []);
+
+  // useEffect(() => {
+  //   if (!data) {
+  //     fetchData()
+  //   }
+  // }, []);
 
   async function makeApiRequest(route: string, method: string, body?: string) {
     const requestUrl = `${BASE_URL}${route}`

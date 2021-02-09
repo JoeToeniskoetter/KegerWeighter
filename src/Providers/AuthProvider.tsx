@@ -5,7 +5,8 @@ import { UserTokens } from '../shared/types';
 import messaging from '@react-native-firebase/messaging';
 import { AppStateStatus } from 'react-native';
 
-const BASE_URL = __DEV__ ? 'http://192.168.1.13:3000' : 'dev'
+//TODO: Point to the actaul url instead
+export const BASE_URL = __DEV__ ? 'http://192.168.1.13:3000' : 'http://157.245.87.23'
 
 type AuthError = {
   error: string
