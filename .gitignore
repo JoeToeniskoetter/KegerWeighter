@@ -65,4 +65,6 @@ buck-out/
 
 #firebase creds
 google-services.json
-GoogleService-Info.plist
+*.plist
+*.hprof
+*.jks
