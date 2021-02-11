@@ -65,5 +65,7 @@ buck-out/
 /ios/Pods/
 
 #firebase creds
+gradle.properties
 google-services.json
-GoogleService-Info.plist
+*.plist
+*.jks
