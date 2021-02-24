@@ -6,7 +6,7 @@ import messaging from '@react-native-firebase/messaging';
 import { AppStateStatus } from 'react-native';
 
 //TODO: Point to the actaul url instead
-export const BASE_URL = __DEV__ ? 'http://192.168.1.225:3000' : 'http://157.245.87.23'
+export const BASE_URL = __DEV__ ? 'https://thekegerweighter.com' : 'http://192.168.1.225:3000'
 
 type AuthError = {
   error: string
@@ -141,6 +141,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           password
         })
       });
+      console.log(result)
       let json = await result.json();
       if (result.ok) {
         let xAuthToken = result.headers.get('x-auth-token')
@@ -170,7 +171,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       method: 'post',
       body: JSON.stringify({ email })
     })
-    console.log(response)
     if (response.ok) {
       const json = await response.json();
       console.log(json)
