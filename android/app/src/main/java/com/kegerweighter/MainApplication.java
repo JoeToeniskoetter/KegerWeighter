@@ -1,4 +1,4 @@
-package com.joetoeniskoetter.KegerWeighter;
+package com.thekegerweighter.kegerweighter;
 
 import android.app.Application;
 import android.content.Context;

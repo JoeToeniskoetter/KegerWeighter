@@ -1,4 +1,4 @@
-package com.joetoeniskoetter.KegerWeighter;
+package com.thekegerweighter.kegerweighter;
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.zoontek.rnbootsplash.RNBootSplash;

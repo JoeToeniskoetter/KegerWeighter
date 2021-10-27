@@ -45,6 +45,7 @@ export const KegCardController: React.FC<KegCardControllerProps> = ({ navigation
       key={2}
       data={data}
       keyExtractor={(item: any) => item.id}
+      contentContainerStyle={{ height: '150%' }}
       renderItem={({ item, index }) => {
         return (
           <LargeKegCard item={item} navigation={navigation} size={cardLayout} />

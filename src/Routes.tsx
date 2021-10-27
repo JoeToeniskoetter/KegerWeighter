@@ -10,13 +10,11 @@ interface RoutesProps {
 }
 
 export const Routes: React.FC<RoutesProps> = ({ }) => {
-    const { user, loadingPrevUser } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
     useEffect(() => {
-        if (!loadingPrevUser) {
-            setTimeout(() => {
-                RNBootSplash.hide({ fade: true })
-            }, 750)
-        }
+        setTimeout(() => {
+            RNBootSplash.hide({ fade: true })
+        }, 750)
     }, [])
-    return user ? <HomeStack /> : <AuthStack />
+    return !user ? <AuthStack /> : <HomeStack />
 }

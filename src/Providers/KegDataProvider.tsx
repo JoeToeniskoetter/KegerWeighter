@@ -65,8 +65,8 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
       }
     } else {
       if (response.status === 401) {
-        logout()
         Alert.alert("You've been logged out")
+        logout();
       }
     }
     let json = await response.json();
@@ -128,6 +128,8 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
     } else {
       console.log('error fetching data')
       Alert.alert(json.message)
+      setLoading(false);
+      return;
     }
     setLoading(false)
   }
@@ -148,3 +150,4 @@ export const KegDataProvider: React.FC<KegDataProviderProps> = ({ children }) =>
 }
 
 
+export const useKegData = () => React.useContext(KegDataContext);

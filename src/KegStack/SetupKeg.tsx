@@ -57,7 +57,7 @@ export function SetupKeg({ navigation, route }: HomeNavProps<'NewKeg'>) {
       >
         {({ errors, touched, values, handleChange, setFieldValue, handleSubmit, isSubmitting, setFieldTouched }) => {
           return (
-            <View style={{ flex: 1, width, alignItems: 'center' }}>
+            <View style={{ width, alignItems: 'center' }}>
               <Text style={{ alignSelf: 'flex-start', marginLeft: 40, marginTop: 10, marginBottom: 5, color: '#868383' }}>KegerWeighter ID</Text>
               <TextInput style={[{ backgroundColor: '#E2DFDF', width: '80%', height: 45, opacity: 0.8, borderRadius: 10, paddingHorizontal: 20 }, touched.id && errors.id ? styles.inputError : null]} placeholderTextColor="#868383"
                 onChangeText={handleChange('id')} value={values.id}
@@ -78,8 +78,8 @@ export function SetupKeg({ navigation, route }: HomeNavProps<'NewKeg'>) {
                 flexDirection: 'row', justifyContent: 'space-between', width: width * .8
               }}>
               </View>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', }}>
-                <Text style={{ width: width * .8, marginTop: 10, color: '#868383' }}>Select a Keg Size</Text>
+              <Text style={{ width: width * .8, marginTop: 10, color: '#868383' }}>Select a Keg Size</Text>
+              <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <CheckBox
                   center
                   title='1/2 Barrel'
@@ -95,7 +95,10 @@ export function SetupKeg({ navigation, route }: HomeNavProps<'NewKeg'>) {
                   checked={values.kegSize === KegSizes.QUARTER_BARREL}
                   containerStyle={styles.checkbox}
                   onPress={() => setFieldValue('kegSize', KegSizes.QUARTER_BARREL)}
+
                 />
+              </View>
+              <View style={{ alignItems: 'center', justifyContent: 'center', width: '100%', flexDirection: 'row' }}>
                 <CheckBox
                   center
                   title='1/8 Barrel'
@@ -103,6 +106,7 @@ export function SetupKeg({ navigation, route }: HomeNavProps<'NewKeg'>) {
                   checked={values.kegSize === KegSizes.EIGHTH_BARREL}
                   containerStyle={styles.checkbox}
                   onPress={() => setFieldValue('kegSize', KegSizes.EIGHTH_BARREL)}
+
                 />
                 <CheckBox
                   center
@@ -111,7 +115,10 @@ export function SetupKeg({ navigation, route }: HomeNavProps<'NewKeg'>) {
                   checked={values.kegSize === KegSizes.PONY_KEG}
                   containerStyle={styles.checkbox}
                   onPress={() => setFieldValue('kegSize', KegSizes.PONY_KEG)}
+
                 />
+              </View>
+              <View style={{ alignItems: 'center', justifyContent: 'center', width: '100%', flexDirection: 'row' }}>
                 <CheckBox
                   center
                   title='Cornelious Keg'
@@ -119,18 +126,20 @@ export function SetupKeg({ navigation, route }: HomeNavProps<'NewKeg'>) {
                   checked={values.kegSize === KegSizes.CORNELIOUS_KEG}
                   containerStyle={{ backgroundColor: 'transparent', width, borderColor: 'transparent' }}
                   onPress={() => setFieldValue('kegSize', KegSizes.CORNELIOUS_KEG)}
+
                 />
-                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 5 }}>
-                  <Text style={{ width: width * .6, color: '#868383', fontSize: 16 }}>Notify Me When This Keg is Low</Text>
-                  <Switch
-                    onValueChange={(value) => setFieldValue('subscribed', value)}
-                    value={values.subscribed}
-                  />
-                </View>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 5 }}>
+                <Text style={{ width: width * .6, color: '#868383', fontSize: 16 }}>Notify Me When This Keg is Low</Text>
+                <Switch
+                  onValueChange={(value) => setFieldValue('subscribed', value)}
+                  value={values.subscribed}
+                  style={{ margin: 10 }}
+                />
                 <View>
                 </View>
               </View>
-              <TouchableHighlight style={{ backgroundColor: '#159DFF', height: 45, alignItems: 'center', justifyContent: 'center', borderRadius: 10, width: width * .8, alignSelf: 'center', marginTop: 10 }}
+              <TouchableHighlight style={{ backgroundColor: '#159DFF', height: 45, alignItems: 'center', justifyContent: 'center', borderRadius: 10, width: width * .8, alignSelf: 'center', margin: 10 }}
                 underlayColor={"#159DFF"}
                 onPress={handleSubmit}
               >
@@ -142,7 +151,7 @@ export function SetupKeg({ navigation, route }: HomeNavProps<'NewKeg'>) {
           )
         }}
       </Formik>
-    </ScrollView>
+    </ScrollView >
   );
 }
 

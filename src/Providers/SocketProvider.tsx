@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import io, { Socket } from 'socket.io-client';
 import { KegEvents, KegUpdate } from '../shared/types';
-import { AuthContext, BASE_URL } from './AuthProvider';
-import { KegDataContext } from './KegDataProvider';
+import { AuthContext, BASE_URL, useAuth } from './AuthProvider';
+import { KegDataContext, useKegData } from './KegDataProvider';
 
 interface SocketContextProps {
   socket: typeof Socket | null,
@@ -17,8 +17,8 @@ export const SocketContext = createContext<SocketContextProps>({
 export const SocketProvider: React.FC<{}> = ({ children }) => {
   const [socket, setSocket] = useState<typeof Socket | null>(null);
   const [socketConnected, setSocketConnected] = useState<boolean>(false);
-  const { tokens } = useContext(AuthContext);
-  const { fetchData } = useContext(KegDataContext);
+  const { tokens } = useAuth();
+  const { fetchData } = useKegData();
 
 
   useEffect(() => {
@@ -62,3 +62,5 @@ export const SocketProvider: React.FC<{}> = ({ children }) => {
     </SocketContext.Provider>
   );
 }
+
+export const useSocket = () => React.useContext(SocketContext)

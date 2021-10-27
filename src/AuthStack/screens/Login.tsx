@@ -8,6 +8,7 @@ import { PrimaryButton } from './components/PrimaryButton'
 import { useContext } from 'react';
 import { AuthContext } from '.././../Providers/AuthProvider';
 
+const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
 
 export default function Login({ navigation, route }: AuthNavProps<'Login'>) {
   const [email, setEmail] = useState<string>('');
@@ -15,25 +16,20 @@ export default function Login({ navigation, route }: AuthNavProps<'Login'>) {
 
   const { setUser, loginOrSignUp, loading } = useContext(AuthContext);
 
-  const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
   return (
     <>
-      <SvgFromXml xml={xml} width="200%" height="100%" style={{
-        transform: [{ rotate: '-45deg' }],
-        position: 'absolute',
-        overflow: 'hidden'
-      }}>
+      <SvgFromXml xml={xml} width="200%" height="100%" style={styles.backgroundLogo}>
       </SvgFromXml>
       <View style={{ height: '30%', width: '100%' }}>
-        <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', marginTop: (STATUS_BAR_HEIGHT || 0 + 100) }}>
+        <View style={styles.mainLogoContainer}>
           <SvgFromXml xml={SVGLogo2} />
-          <Text style={{ fontSize: 24, marginLeft: -20, marginTop: 30 }}>KegerWeighter</Text>
+          <Text style={styles.mainTitle}>KegerWeighter</Text>
         </View>
       </View>
-      <KeyboardAvoidingView style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'flex-start', width: '100%', height: '70%', padding: '10%' }}>
+      <KeyboardAvoidingView style={styles.loginFormContainer}>
         <Text style={{ fontSize: 24 }}>Welcome!</Text>
-        <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 25, paddingHorizontal: 20, fontSize: 18 }} placeholder="Email" placeholderTextColor="#868383" onChangeText={(text: string) => setEmail(text)} />
-        <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 10, paddingHorizontal: 20, fontSize: 18 }} placeholder="Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={(text: string) => setPassword(text)} value={password} />
+        <TextInput style={styles.textInput} placeholder="Email" placeholderTextColor="#868383" onChangeText={(text: string) => setEmail(text)} />
+        <TextInput style={styles.textInput} placeholder="Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={(text: string) => setPassword(text)} value={password} />
         <PrimaryButton
           text={'Sign In'}
           loading={loading}
@@ -60,3 +56,36 @@ export default function Login({ navigation, route }: AuthNavProps<'Login'>) {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  backgroundLogo: {
+    transform: [{ rotate: '-45deg' }],
+    position: 'absolute',
+    overflow: 'hidden',
+  },
+  textInput: {
+    backgroundColor: '#E2DFDF',
+    width: '100%',
+    height: 55,
+    opacity: 0.9,
+    borderRadius: 10,
+    marginTop: 10,
+    paddingHorizontal: 20,
+    fontSize: 18,
+  },
+  loginFormContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    width: '100%',
+    height: '70%',
+    padding: '10%',
+  },
+  mainLogoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginTop: STATUS_BAR_HEIGHT || 0 + 100,
+  },
+  mainTitle: { fontSize: 24, marginLeft: -20, marginTop: 30 },
+});

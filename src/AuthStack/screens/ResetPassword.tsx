@@ -8,29 +8,25 @@ import { PrimaryButton } from './components/PrimaryButton'
 import { useContext } from 'react';
 import { AuthContext } from '.././../Providers/AuthProvider';
 import { Formik } from 'formik';
+const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
 
 
 export default function ResetPassword({ navigation, route }: AuthNavProps<'ResetPassword'>) {
   const { resetPassword, newPassword } = useContext(AuthContext);
   const [emailSent, setEmailSent] = useState<boolean>(false)
 
-  const STATUS_BAR_HEIGHT = StatusBar.currentHeight;
   return (
     <>
-      <SvgFromXml xml={xml} width="200%" height="100%" style={{
-        transform: [{ rotate: '-45deg' }],
-        position: 'absolute',
-        overflow: 'hidden'
-      }}>
+      <SvgFromXml xml={xml} width="200%" height="100%" style={styles.backgroundImage}>
       </SvgFromXml>
       <View style={{ height: '30%', width: '100%' }}>
-        <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row', marginTop: (STATUS_BAR_HEIGHT || 0 + 100) }}>
+        <View style={styles.logoContainer}>
           <SvgFromXml xml={SVGLogo2} />
-          <Text style={{ fontSize: 24, marginLeft: -20, marginTop: 30 }}>KegerWeighter</Text>
+          <Text style={styles.title}>KegerWeighter</Text>
         </View>
       </View>
       {!emailSent ?
-        <View style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'flex-start', width: '100%', height: '70%', padding: '10%' }}>
+        <View style={styles.formContainer}>
           <Formik initialValues={{ email: '' }} onSubmit={async (values) => {
             let result = await resetPassword(values.email);
             if (result) {
@@ -41,7 +37,7 @@ export default function ResetPassword({ navigation, route }: AuthNavProps<'Reset
             {({ handleSubmit, values, handleChange, isSubmitting }) => (
               <>
                 <Text style={{ fontSize: 24 }}>Reset Password!</Text>
-                <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.8, borderRadius: 10, marginTop: 25, paddingHorizontal: 20, fontSize: 18 }} placeholder="Email" placeholderTextColor="#868383" onChangeText={handleChange('email')} value={values.email} />
+                <TextInput style={styles.textInput} placeholder="Email" placeholderTextColor="#868383" onChangeText={handleChange('email')} value={values.email} />
                 <PrimaryButton
                   text={'Send Email'}
                   loading={isSubmitting}
@@ -60,7 +56,7 @@ export default function ResetPassword({ navigation, route }: AuthNavProps<'Reset
           </Formik>
         </View>
         :
-        <View style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'flex-start', width: '100%', height: '70%', padding: '10%' }}>
+        <View style={styles.formContainer}>
           <Formik initialValues={{ tempPassword: '', newPassword: '', confirmPassword: '' }} onSubmit={async (values) => {
             let result = await newPassword({ token: values.tempPassword, newPassword: values.newPassword });
             if (result) {
@@ -72,9 +68,9 @@ export default function ResetPassword({ navigation, route }: AuthNavProps<'Reset
               return (
                 <>
                   <Text style={{ fontSize: 24 }}>Reset Password</Text>
-                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 25, paddingHorizontal: 20 }} placeholder="Temp Password" placeholderTextColor="#868383" onChangeText={handleChange('tempPassword')} value={values.tempPassword} />
-                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 10, paddingHorizontal: 20 }} placeholder="New Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('newPassword')} value={values.newPassword} />
-                  <TextInput style={{ backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 10, paddingHorizontal: 20 }} placeholder="Confirm New Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('confirmPassword')} value={values.confirmPassword} />
+                  <TextInput style={styles.textInput} placeholder="Temp Password" placeholderTextColor="#868383" onChangeText={handleChange('tempPassword')} value={values.tempPassword} />
+                  <TextInput style={styles.textInput} placeholder="New Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('newPassword')} value={values.newPassword} />
+                  <TextInput style={styles.textInput} placeholder="Confirm New Password" secureTextEntry={true} placeholderTextColor="#868383" onChangeText={handleChange('confirmPassword')} value={values.confirmPassword} />
                   <PrimaryButton
                     text={'Sign In'}
                     loading={isSubmitting}
@@ -98,3 +94,17 @@ export default function ResetPassword({ navigation, route }: AuthNavProps<'Reset
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  textInput: { backgroundColor: '#E2DFDF', width: '100%', height: 55, opacity: 0.9, borderRadius: 10, marginTop: 25, paddingHorizontal: 20 },
+  backgroundImage: {
+    transform: [{ rotate: '-45deg' }],
+    position: 'absolute',
+    overflow: 'hidden'
+  },
+  formContainer: {
+    flex: 1, alignItems: 'flex-start', justifyContent: 'flex-start', width: '100%', height: '70%', padding: '10%'
+  },
+  title: { fontSize: 24, marginLeft: -20, marginTop: 30 },
+  logoContainer: { flex: 1, justifyContent: 'center', flexDirection: 'row', marginTop: (STATUS_BAR_HEIGHT || 0 + 100) }
+})
